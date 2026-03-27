@@ -18,8 +18,7 @@ export async function POST(req: Request) {
     return new Response("Missing svix headers", { status: 400 });
   }
 
-  const payload = await req.json();
-  const body = JSON.stringify(payload);
+  const body = await req.text();
 
   const wh = new Webhook(WEBHOOK_SECRET);
   let evt: WebhookEvent;
@@ -35,7 +34,12 @@ export async function POST(req: Request) {
   }
 
   if (evt.type === "user.created") {
-    const { id, email_addresses, first_name, last_name } = evt.data;
+    const { id, email_addresses, first_name, last_name } = evt.data as {
+      id: string;
+      email_addresses: { email_address: string }[];
+      first_name: string | null;
+      last_name: string | null;
+    };
     const email = email_addresses[0]?.email_address ?? "";
     const name = first_name
       ? `${first_name} ${last_name ?? ""}`.trim()
