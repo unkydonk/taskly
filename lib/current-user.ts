@@ -24,14 +24,14 @@ export async function ensureUser() {
 
   if (!user) {
     const clerkUser = await currentUser();
-    user = await db.user.create({
-      data: {
-        clerkId: userId,
-        email: clerkUser?.emailAddresses[0]?.emailAddress ?? "",
-        name: clerkUser?.firstName
-          ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
-          : null,
-      },
+    const email = clerkUser?.emailAddresses[0]?.emailAddress ?? "";
+    const name = clerkUser?.firstName
+      ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
+      : null;
+    user = await db.user.upsert({
+      where: { clerkId: userId },
+      update: { email, name },
+      create: { clerkId: userId, email, name },
       include: { team: true },
     });
   }
