@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { ensureUser } from "@/lib/current-user";
 import { getStripe } from "@/lib/stripe";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST() {
+  const limited = await rateLimit("strict");
+  if (limited) return limited;
   const user = await ensureUser();
 
   const session = await getStripe().checkout.sessions.create({

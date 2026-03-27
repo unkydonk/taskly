@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 interface TeamMember {
   id: string;
   name: string | null;
-  email: string;
 }
 
 interface Team {
@@ -102,7 +101,7 @@ export function TeamPanel() {
             <ul className="space-y-1">
               {team.members.map((m) => (
                 <li key={m.id} className="text-sm">
-                  {m.name || m.email}
+                  {m.name || "Team member"}
                 </li>
               ))}
             </ul>

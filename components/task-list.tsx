@@ -15,7 +15,7 @@ interface Task {
   completed: boolean;
   scope: "PERSONAL" | "TEAM";
   createdAt: string;
-  author: { name: string | null; email: string };
+  author: { name: string | null };
 }
 
 interface TaskData {
@@ -57,7 +57,7 @@ export function TaskList({ hasTeam }: { hasTeam: boolean }) {
       completed: false,
       scope,
       createdAt: new Date().toISOString(),
-      author: { name: null, email: "" },
+      author: { name: null },
     };
 
     setData((prev) =>
