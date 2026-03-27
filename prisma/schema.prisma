@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id               String   @id @default(cuid())
+  clerkId          String   @unique
+  email            String   @unique
+  name             String?
+  plan             Plan     @default(FREE)
+  stripeCustomerId String?  @unique
+  teamId           String?
+  team             Team?    @relation(fields: [teamId], references: [id])
+  tasks            Task[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Team {
+  id         String   @id @default(cuid())
+  name       String
+  inviteCode String   @unique @default(cuid())
+  members    User[]
+  tasks      Task[]
+  createdAt  DateTime @default(now())
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  content   String
+  completed Boolean   @default(false)
+  scope     TaskScope @default(PERSONAL)
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id])
+  teamId    String?
+  team      Team?     @relation(fields: [teamId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum TaskScope {
+  PERSONAL
+  TEAM
+}
